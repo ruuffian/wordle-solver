@@ -6,7 +6,7 @@ def def_value():
 
 
 def load_words():
-    with open('test.txt') as word_file:
+    with open('words_alpha.txt') as word_file:
         word_set = set(word_file.read().split())
     valid_words = [val for val in word_set if len(val) == 5]
     return valid_words
@@ -37,10 +37,26 @@ def uniqueness_score(wordin):
     return score
 
 
-def get_unique(wordlist):
+def letter_density(lst):
+    dnsty = defaultdict(def_value)
+    for word in lst:
+        for char in word:
+            dnsty[char] += 1
+    return dnsty
+
+
+def density_score(word, dnsty):
+    score = 0
+    for char in word:
+        score += dnsty[char]
+    return score
+
+
+def get_densest_unique(wordlist):
+    density = letter_density(wordlist)
     values = {}
     for i in wordlist:
-        values[i] = uniqueness_score(i)
+        values[i] = (uniqueness_score(i) ** 2) * density_score(i, density)
     tmp = 0
     maxstr = ""
     for i in values:
@@ -82,7 +98,7 @@ if __name__ == '__main__':
         except NameError:
             masterlst = lst_refine(usrin, load_words(), [], [], ["0", "0", "0", "0", "0"])
         finally:
-            unique = get_unique(masterlst["lst"])
+            unique = get_densest_unique(masterlst["lst"])
             if "y" not in wordle and "b" not in wordle:
                 print("Congratulations! We got the answer in " + str(count) + " tries!!")
                 break
