@@ -6,7 +6,7 @@ def def_value():
 
 
 def load_words():
-    with open('words_alpha.txt') as word_file:
+    with open('test.txt') as word_file:
         word_set = set(word_file.read().split())
     valid_words = [val for val in word_set if len(val) == 5]
     return valid_words
@@ -19,8 +19,10 @@ def correct_check(val, crrct):
     return True
 
 
-def contain_char(val, bl):
-    for char in bl:
+def contain_char(val, lst):
+    if len(lst) == 0:
+        return True
+    for char in lst:
         if char in val:
             return True
     return False
@@ -86,4 +88,4 @@ if __name__ == '__main__':
                 break
             count += 1
             print("Try " + unique)
-print("Thank you for using ruuffian's wordle solver.")
+print("Thank you for using ruuffian's wordle solver!")
