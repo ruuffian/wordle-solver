@@ -1,12 +1,19 @@
+from collections import defaultdict
+
+
+def def_value():
+    return 0
+
+
 def load_words():
-    with open('words_alpha.txt.txt') as word_file:
+    with open('words_alpha.txt') as word_file:
         word_set = set(word_file.read().split())
     valid_words = [val for val in word_set if len(val) == 5]
     return valid_words
 
 
 def correct_check(val, crrct):
-    for i in range(0, 5):
+    for i in range(5):
         if crrct[i] != "0" and val[i] != crrct[i]:
             return False
     return True
@@ -21,13 +28,10 @@ def contain_char(val, bl):
 
 def uniqueness_score(wordin):
     score = 5
-    letters = {}
-    for i in range(0, 5):
-        if wordin[i] in letters.keys():
-            letters[wordin[i]] += 1
-            score -= 1
-        else:
-            letters[wordin[i]] = 1
+    letters = defaultdict(def_value)
+    for i in range(5):
+        letters[wordin[i]] += 1
+        score -= letters[wordin[i]] - 1
     return score
 
 
@@ -45,17 +49,15 @@ def get_unique(wordlist):
 
 
 def lst_refine(wordin, lst, bl, yllw, crrct):
-    for i in range(0, 5):
+    for i in range(5):
         if wordle[i] == "b":
             bl.append(wordin[i])
         elif wordle[i] == "y":
             yllw.append(wordin[i])
         else:
             crrct[i] = wordin[i]
-    possiblewords = [val for val in lst if
-                     not contain_char(val, bl) and contain_char(val, yllw) and correct_check(val, crrct)]
-    # allcorrectletters = [val for val in noblacklist if contain_char(val, yllw)]
-    # possiblewords = [val for val in allcorrectletters if correct_check(val, crrct)]
+    possiblewords = [lstword for lstword in lst if
+                     not contain_char(lstword, bl) and contain_char(lstword, yllw) and correct_check(lstword, crrct)]
     return {
         "blacklist": bl,
         "yellow": yllw,
@@ -68,24 +70,20 @@ if __name__ == '__main__':
     print("Welcome to ruuffian's wordle solver!")
     print("What word did you start with? I suggest something with lots of vowels, like audio or adieu.")
     usrin = input()
-    print("What was the wordle output?")
-    wordle = input()
-    english_words = load_words()
-    blacklist = []
-    yellow = []
-    correct = ["0", "0", "0", "0", "0"]
-    masterlst = lst_refine(usrin, english_words, blacklist, yellow, correct)
     count = 1
-    unique = get_unique(masterlst["lst"])
-    print("Try " + unique)
-    while len(masterlst["lst"]) > 0 and count <= 6:
+    while count <= 6:
         print("What was the wordle output?")
         wordle = input()
-        if "y" not in wordle and "b" not in wordle:
-            print("Congratulations! We got the answer in " + str(count) + " tries!!")
-            break
-        masterlst = lst_refine(unique, masterlst["lst"], masterlst["blacklist"], masterlst["yellow"], masterlst["correct"])
-        count += 1
-        unique = get_unique(masterlst["lst"])
-        print("Try " + unique)
-    print("Thank you for using ruuffian's wordle solver. I hope it worked out!")
+        try:
+            masterlst = lst_refine(unique, masterlst["lst"], masterlst["blacklist"],
+                                   masterlst["yellow"], masterlst["correct"])
+        except NameError:
+            masterlst = lst_refine(usrin, load_words(), [], [], ["0", "0", "0", "0", "0"])
+        finally:
+            unique = get_unique(masterlst["lst"])
+            if "y" not in wordle and "b" not in wordle:
+                print("Congratulations! We got the answer in " + str(count) + " tries!!")
+                break
+            count += 1
+            print("Try " + unique)
+print("Thank you for using ruuffian's wordle solver.")
