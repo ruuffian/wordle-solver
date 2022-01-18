@@ -23,7 +23,7 @@ Here are some wordle outputs with screenshots of the wordle screen.
 
 `ybcbb`
 
-![img.png](img.png)
+![img.png](assets/bccbb.png)
 
 `bccbbb`
 
