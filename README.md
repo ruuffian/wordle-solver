@@ -25,7 +25,7 @@ Here are some wordle outputs with screenshots of the wordle screen.
 
 ![img.png](assets/bccbb.png)
 
-`bccbbb`
+`bccbb`
 
 Upon successfull word guess, input `ccccc` and the script will tell you how many tries it took. Feel free to pr
 or submit issues!
