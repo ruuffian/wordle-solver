@@ -13,7 +13,7 @@ what letters arent, and what letters are in the correct position.
 
 Here are some wordle outputs with screenshots of the wordle screen.
 
-#### Key: b = black, c = correct, y = yellow
+#### Key: b = black, y = yellow, c = correct
 
 ![bbbbb.png](assets/bbbbb.png)
 
