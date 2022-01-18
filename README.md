@@ -13,3 +13,19 @@ what letters arent, and what letters are in the correct position.
 
 Here are some wordle outputs with screenshots of the wordle screen.
 
+#### Key: b = black, c = correct, y = yellow
+
+![bbbbb.png](assets/bbbbb.png)
+
+`bbbbb`
+
+![ybcbb.png](assets/ybcbb.png)
+
+`ybcbb`
+
+![img.png](img.png)
+
+`bccbbb`
+
+Upon successfull word guess, input `ccccc` and the script will tell you how many tries it took. Feel free to pr
+or submit issues!
