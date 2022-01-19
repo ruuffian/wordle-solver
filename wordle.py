@@ -104,4 +104,4 @@ if __name__ == '__main__':
                 break
             count += 1
             print("Try " + unique)
-print("Thank you for using ruuffian's wordle solver!")
+    print("Thank you for using ruuffian's wordle solver!")
