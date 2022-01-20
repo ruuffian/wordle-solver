@@ -12,6 +12,12 @@ def enter_word(word):
     html.send_keys(Keys.ENTER)
     time.sleep(1)
 
+
+def letter(index):
+    return chr(95 + index)
+
+
+def grab_keys():
     # Cascades through the DOM to find the key data to blacklist, yellowlist, and correctlist letters
     app = driver.find_element(By.TAG_NAME, "game-app")
     # execute script bypasses the shadow-root
@@ -19,24 +25,14 @@ def enter_word(word):
     keyboard = game.find_element(By.TAG_NAME, "game-keyboard")
     keys = driver.execute_script("return arguments[0].shadowRoot.getElementById('keyboard')", keyboard)
     time.sleep(1)
-    keydata = []
+    keydata = {}
     rows = keys.find_elements(By.CLASS_NAME, "row")
     print(rows)
     for e in rows:
-        keydata.append(e.find_element(By.CSS_SELECTOR, "button['data-key']"))
-    # for i in range(3):
-    #     lim = 0
-    #     if i == 0: lim = 10
-    #     if i == 1: lim = 9
-    #     if i == 2: lim = 8
-    #     for j in range(lim):
-    #         if lim == 8:
-    #             i += 1
-    #         selector = "#keyboard > div:nth-child(" + str(i) + ") > button:nth-child(" + str(
-    #             j) + "))"
-    #         keydata.append(keys.find_element(By.CSS_SELECTOR, selector))
-    #         time.sleep(.25)
+        for i in range(26):
+            keydata[letter(i)] = e.find_elements(By.CSS_SELECTOR, r"#button[data-key]")
     print(keydata)
+    return keydata
 
 
 if __name__ == '__main__':
@@ -49,4 +45,5 @@ if __name__ == '__main__':
     html = driver.find_element(By.TAG_NAME, "html")
     html.click()
     enter_word("Hello Wordle")
+    grab_keys()
     driver.close()
