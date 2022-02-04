@@ -7,8 +7,9 @@ def def_value():
 
 def load_words():
     with open('valid.txt') as word_file:
-        word_set = set(word_file.read().split(", "))
-    return word_set
+        word_set = set(word_file.read().split())
+        valid_lst = [val for val in word_set]
+    return valid_lst
 
 
 def correct_check(val, crrct):

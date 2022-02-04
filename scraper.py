@@ -28,15 +28,14 @@ def parse_local(local, wordin, corr):
     yl = []
     i = 0
     # THIS IS WRONG, NEED TO MODULARIZE THIS
-    while guesses[i] != wordin and i < len(guesses):
-        i += 1
     for let in wordin:
-        if local["evaluations"][i] == "correct":
+        if local["evaluations"][0][i] == "correct":
             corr[i] = let
-        elif local["evaluations"][i] == "present":
+        elif local["evaluations"][0][i] == "present":
             yl.append(let)
         else:
             bl.append(let)
+        i += 1
     return {
         "blacklist": bl,
         "yellowlist": yl,
@@ -69,7 +68,7 @@ if __name__ == '__main__':
         "lst": alg.load_words(),
     }
     # loop until game is won or lost
-    while gamestate["gameStatus"] == "IN_PROGRESS" or count < 6:
+    while gamestate["gameStatus"] == "IN_PROGRESS" and count < 6:
         print("What word would you like to guess?")
         guess = input()
         # Need arg validation: no nums, special chars, exactly 5 chars long
@@ -89,5 +88,9 @@ if __name__ == '__main__':
         # pick a word and suggest it, loop for next guess
         print("I suggest this word- " + alg.pick(masterlist))
         count += 1
+    if gamestate["gameStatus"] == "WIN":
+        print("Congrats (to me), you got the word right!")
+    else:
+        print("dang you gotta get better at not making typos lmfao- bg")
 
     driver.close()
