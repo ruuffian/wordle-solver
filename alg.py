@@ -6,10 +6,9 @@ def def_value():
 
 
 def load_words():
-    with open('words_alpha.txt') as word_file:
-        word_set = set(word_file.read().split())
-    valid_words = [val for val in word_set if len(val) == 5]
-    return valid_words
+    with open('valid.txt') as word_file:
+        word_set = set(word_file.read().split(", "))
+    return word_set
 
 
 def correct_check(val, crrct):
@@ -54,14 +53,14 @@ def frequency_score(word, frqncy):
 
 def get_frequent_unique(wordlist):
     freq = letter_frequency(wordlist)
-    values = {}
+    scores = {}
     for i in wordlist:
-        values[i] = (frequency_score(i, freq) ** 2) * frequency_score(i, freq)
+        scores[i] = (uniqueness_score(i) ** 2) * frequency_score(i, freq)
     tmp = 0
     maxstr = ""
-    for i in values:
-        if values[i] > tmp:
-            tmp = values[i]
+    for i in scores:
+        if scores[i] > tmp:
+            tmp = scores[i]
             maxstr = i
     return maxstr
 
@@ -72,8 +71,8 @@ def lst_refine(lst, bl, yllw, crrct):
                                                                                                      crrct)]
     return {
         "blacklist": bl,
-        "yellow": yllw,
-        "correct": crrct,
+        "yellowlist": yllw,
+        "greenlist": crrct,
         "lst": possiblewords,
     }
 

@@ -45,14 +45,18 @@ def parse_local(local, wordin, corr):
 
 
 if __name__ == '__main__':
+    # load chromedriver
     s = Service(chromedriver_binary.chromedriver_filename)
     driver = webdriver.Chrome()
     driver.get("https://www.powerlanguage.co.uk/wordle/")
     time.sleep(1)
+    # make sure chrome loaded website correctly
     page_title = driver.title
     print(page_title)
+    # remove annoying popup
     html = driver.find_element(By.TAG_NAME, "html")
     html.click()
+    # intialize variables
     gamestate = grab_local()
     blacklist = []
     yellowlist = []
@@ -64,19 +68,25 @@ if __name__ == '__main__':
         "greenlist": correct,
         "lst": alg.load_words(),
     }
+    # loop until game is won or lost
     while gamestate["gameStatus"] == "IN_PROGRESS" or count < 6:
         print("What word would you like to guess?")
         guess = input()
         # Need arg validation: no nums, special chars, exactly 5 chars long
         enter_word(guess)
         time.sleep(1)
+        # grab localstorage
         gamestate = grab_local()
+        # read localstorage to determine what the guess resulted in
         post_word = parse_local(gamestate, guess, correct)
-        blacklist.append(post_word["blacklist"])
-        yellowlist.append(post_word["yellowlist"])
+        # update blacklistm yellowlist, and greenlist
+        blacklist.extend(post_word["blacklist"])
+        yellowlist.extend(post_word["yellowlist"])
         correct = post_word["greenlist"]
+        # update possible word list
         masterlist = alg.lst_refine(masterlist["lst"], masterlist["blacklist"], masterlist["yellowlist"],
                                     masterlist["greenlist"])
+        # pick a word and suggest it, loop for next guess
         print("I suggest this word- " + alg.pick(masterlist))
         count += 1
 
