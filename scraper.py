@@ -22,20 +22,25 @@ def grab_local():
     return json.loads(gamestate)
 
 
+# NEED TO CHANGE FROM DOUBLE ITERATE TO PASSING A COUNT THROUGH METHOD SIG
 def parse_local(local, wordin, corr):
     guesses = local["boardState"]
+    curr = wordin
+    i = 0
+    while curr != guesses[i]:
+        i += 1
     bl = []
     yl = []
-    i = 0
+    j = 0
     # THIS IS WRONG, NEED TO MODULARIZE THIS
     for let in wordin:
-        if local["evaluations"][0][i] == "correct":
-            corr[i] = let
-        elif local["evaluations"][0][i] == "present":
+        if local["evaluations"][i][j] == "correct":
+            corr[j] = let
+        elif local["evaluations"][i][j] == "present":
             yl.append(let)
         else:
             bl.append(let)
-        i += 1
+        j += 1
     return {
         "blacklist": bl,
         "yellowlist": yl,
@@ -94,3 +99,5 @@ if __name__ == '__main__':
         print("dang you gotta get better at not making typos lmfao- bg")
 
     driver.close()
+    exit(0)
+
