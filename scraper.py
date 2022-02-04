@@ -4,6 +4,8 @@ from selenium.webdriver.edge.service import Service
 from selenium import webdriver
 import chromedriver_binary
 import time
+import alg
+import json
 
 
 def enter_word(word):
@@ -13,26 +15,33 @@ def enter_word(word):
     time.sleep(1)
 
 
-def letter(index):
-    return chr(95 + index)
+def grab_local():
+    # Pull gamestate from localstorage
+    local = driver.execute_script("return localStorage")
+    gamestate = local["gameState"]
+    return json.loads(gamestate)
 
 
-def grab_keys():
-    # Cascades through the DOM to find the key data to blacklist, yellowlist, and correctlist letters
-    app = driver.find_element(By.TAG_NAME, "game-app")
-    # execute script bypasses the shadow-root
-    game = driver.execute_script("return arguments[0].shadowRoot.getElementById('game')", app)
-    keyboard = game.find_element(By.TAG_NAME, "game-keyboard")
-    keys = driver.execute_script("return arguments[0].shadowRoot.getElementById('keyboard')", keyboard)
-    time.sleep(1)
-    keydata = {}
-    rows = keys.find_elements(By.CLASS_NAME, "row")
-    print(rows)
-    for e in rows:
-        for i in range(26):
-            keydata[letter(i)] = e.find_elements(By.CSS_SELECTOR, r"#button[data-key]")
-    print(keydata)
-    return keydata
+def parse_local(local, wordin, corr):
+    guesses = local["boardState"]
+    bl = []
+    yl = []
+    i = 0
+    # THIS IS WRONG, NEED TO MODULARIZE THIS
+    while guesses[i] != wordin and i < len(guesses):
+        i += 1
+    for let in wordin:
+        if local["evaluations"][i] == "correct":
+            corr[i] = let
+        elif local["evaluations"][i] == "present":
+            yl.append(let)
+        else:
+            bl.append(let)
+    return {
+        "blacklist": bl,
+        "yellowlist": yl,
+        "greenlist": corr,
+    }
 
 
 if __name__ == '__main__':
@@ -44,6 +53,31 @@ if __name__ == '__main__':
     print(page_title)
     html = driver.find_element(By.TAG_NAME, "html")
     html.click()
-    enter_word("Hello Wordle")
-    grab_keys()
+    gamestate = grab_local()
+    blacklist = []
+    yellowlist = []
+    correct = ["0", "0", "0", "0", "0"]
+    count = 0
+    masterlist = {
+        "blacklist": blacklist,
+        "yellowlist": yellowlist,
+        "greenlist": correct,
+        "lst": alg.load_words(),
+    }
+    while gamestate["gameStatus"] == "IN_PROGRESS" or count < 6:
+        print("What word would you like to guess?")
+        guess = input()
+        # Need arg validation: no nums, special chars, exactly 5 chars long
+        enter_word(guess)
+        time.sleep(1)
+        gamestate = grab_local()
+        post_word = parse_local(gamestate, guess, correct)
+        blacklist.append(post_word["blacklist"])
+        yellowlist.append(post_word["yellowlist"])
+        correct = post_word["greenlist"]
+        masterlist = alg.lst_refine(masterlist["lst"], masterlist["blacklist"], masterlist["yellowlist"],
+                                    masterlist["greenlist"])
+        print("I suggest this word- " + alg.pick(masterlist))
+        count += 1
+
     driver.close()
