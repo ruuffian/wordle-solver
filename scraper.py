@@ -23,21 +23,22 @@ def grab_local():
 
 
 # NEED TO CHANGE FROM DOUBLE ITERATE TO PASSING A COUNT THROUGH METHOD SIG
-def parse_local(local, wordin, corr):
+def parse_local(local, wordin, master):
     guesses = local["boardState"]
     curr = wordin
     i = 0
-    while curr != guesses[i]:
+    while curr != guesses[i] and i < 5:
         i += 1
     bl = []
-    yl = []
+    yl = master.yellowlist
+    corr = master.greenlist
     j = 0
     # THIS IS WRONG, NEED TO MODULARIZE THIS
     for let in wordin:
         if local["evaluations"][i][j] == "correct":
             corr[j] = let
         elif local["evaluations"][i][j] == "present":
-            yl.append(let)
+            yl[j].append(let)
         else:
             bl.append(let)
         j += 1
@@ -66,8 +67,8 @@ if __name__ == '__main__':
     yellowlist = []
     greenlist = ["0", "0", "0", "0", "0"]
     count = 0
-    masterlist = alg.WordList
-    masterlist.update_lists(masterlist, alg.load_words(), blacklist, yellowlist, greenlist)
+    masterlist = alg.WordList()
+    masterlist.update_lists(alg.load_words(), blacklist, yellowlist, greenlist)
     # loop until game is won or lost
     suggestion = ""
     while gamestate["gameStatus"] == "IN_PROGRESS" and count < 6:
@@ -81,7 +82,7 @@ if __name__ == '__main__':
         # read localstorage to determine what the guess resulted in
         post_word = parse_local(gamestate, guess, masterlist)
         # update blacklistm yellowlist, and greenlist
-        masterlist.update_lists(masterlist, masterlist.master, post_word[blacklist], post_word["yellowlist"],
+        masterlist.update_lists(masterlist.master, post_word["blacklist"], post_word["yellowlist"],
                                 post_word["greenlist"])
         # update possible word list
         masterlist.master = alg.lst_refine(masterlist)

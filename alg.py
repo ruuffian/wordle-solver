@@ -26,9 +26,13 @@ def check_blacklist_and_yellowlist(curword, lst):
     return troo == len(lst)  # This bit of logic ensures all of the yellow letters appear in the word
 
 
-# This returns true if the word satisfies the conditions set by the yellow letters and false otherwise
+# This returns false if the word contains a yellow letter in a yellow position, and true otherwise
 def check_yellow_positions(curword, yllw):
-    return False
+    for pos in yllw:
+        for i in range(5):
+            if curword[i] in pos:
+                return False
+    return True
 
 
 # This returns false if the word doesnt contain a green letter in the right position and false otherwise
