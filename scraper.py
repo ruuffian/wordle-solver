@@ -64,15 +64,12 @@ if __name__ == '__main__':
     gamestate = grab_local()
     blacklist = []
     yellowlist = []
-    correct = ["0", "0", "0", "0", "0"]
+    greenlist = ["0", "0", "0", "0", "0"]
     count = 0
-    masterlist = {
-        "blacklist": blacklist,
-        "yellowlist": yellowlist,
-        "greenlist": correct,
-        "lst": alg.load_words(),
-    }
+    masterlist = alg.WordList
+    masterlist.update_lists(masterlist, alg.load_words(), blacklist, yellowlist, greenlist)
     # loop until game is won or lost
+    suggestion = ""
     while gamestate["gameStatus"] == "IN_PROGRESS" and count < 6:
         print("What word would you like to guess?")
         guess = input()
@@ -82,22 +79,21 @@ if __name__ == '__main__':
         # grab localstorage
         gamestate = grab_local()
         # read localstorage to determine what the guess resulted in
-        post_word = parse_local(gamestate, guess, correct)
+        post_word = parse_local(gamestate, guess, masterlist)
         # update blacklistm yellowlist, and greenlist
-        blacklist.extend(post_word["blacklist"])
-        yellowlist.extend(post_word["yellowlist"])
-        correct = post_word["greenlist"]
+        masterlist.update_lists(masterlist, masterlist.master, post_word[blacklist], post_word["yellowlist"],
+                                post_word["greenlist"])
         # update possible word list
-        masterlist = alg.lst_refine(masterlist["lst"], masterlist["blacklist"], masterlist["yellowlist"],
-                                    masterlist["greenlist"])
+        masterlist.master = alg.lst_refine(masterlist)
+
         # pick a word and suggest it, loop for next guess
-        print("I suggest this word- " + alg.pick(masterlist))
+        suggestion = alg.pick(masterlist)
+        print("I suggest this word- " + suggestion)
         count += 1
     if gamestate["gameStatus"] == "WIN":
-        print("Congrats (to me), you got the word right!")
+        print("Congrats (to me), you got the word right!" + "\n" + suggestion + " was the big ticket winner! GG!")
     else:
-        print("dang you gotta get better at not making typos lmfao- bg")
+        print("dang you gotta get better at not making typos")
 
     driver.close()
     exit(0)
-

@@ -14,14 +14,9 @@ def load_words():
     return valid_lst
 
 
-def correct_check(curword, grn):
-    for i in range(5):
-        if grn[i] != "0" and curword[i] != grn[i]:
-            return False
-    return True
-
-
-def contain_char(curword, lst):
+# Returns true if the word contains no blacklisted and also has all the yellow letters SOMEWHERE. see check_yellowlist_
+# positions for checking the positions of yellow letters
+def check_blacklist_and_yellowlist(curword, lst):
     troo = 0
     if len(lst) == 0:
         return True
@@ -29,6 +24,19 @@ def contain_char(curword, lst):
         if char in curword:
             troo += 1
     return troo == len(lst)  # This bit of logic ensures all of the yellow letters appear in the word
+
+
+# This returns true if the word satisfies the conditions set by the yellow letters and false otherwise
+def check_yellow_positions(curword, yllw):
+    return False
+
+
+# This returns false if the word doesnt contain a green letter in the right position and false otherwise
+def check_greenlist_positions(curword, grn):
+    for i in range(5):
+        if grn[i] != "0" and curword[i] != grn[i]:
+            return False
+    return True
 
 
 def uniqueness_score(wordin):
@@ -40,48 +48,57 @@ def uniqueness_score(wordin):
     return score
 
 
-def letter_frequency(lst):
-    dnsty = defaultdict(def_value)
-    for word in lst:
+def letter_frequency(master):
+    freq = defaultdict(def_value)
+    for word in master.master:
         for char in word:
-            dnsty[char] += 1
-    return dnsty
+            freq[char] += 1
+    return freq
 
 
-def frequency_score(word, frqncy):
+def frequency_score(word, freq):
     score = 0
     for char in word:
-        score += frqncy[char]
+        score += freq[char]
     return score
 
 
-def get_frequent_unique(wordlist):
-    freq = letter_frequency(wordlist)
+def get_frequent_unique(master):
+    freq = letter_frequency(master.master)
     scores = {}
-    for i in wordlist:
-        scores[i] = (uniqueness_score(i) ** 2) * frequency_score(i, freq)
-    tmp = 0
+    for word in master.master:
+        scores[word] = (uniqueness_score(word) ** 2) * frequency_score(word, freq)
+    maxscr = 0
     maxstr = ""
-    for i in scores:
-        if scores[i] > tmp:
-            tmp = scores[i]
-            maxstr = i
+    for key in scores:
+        if scores[key] > maxscr:
+            maxscr = scores[key]
+            maxstr = key
     return maxstr
 
 
-def lst_refine(lst, black, yellow, green):
-    possiblewords = [lstword for lstword in lst if
-                     not contain_char(lstword, black)
-                     and contain_char(lstword, yellow)
-                     and correct_check(lstword, green)]
-    return {
-        "blacklist": black,
-        "yellowlist": yellow,
-        "greenlist": green,
-        "lst": possiblewords,
-    }
+def lst_refine(master):
+    master.master = [lstword for lstword in master.master if
+                     not check_blacklist_and_yellowlist(lstword, master.blacklist)
+                     and check_yellow_positions(lstword, master.yellowlist)
+                     and check_greenlist_positions(lstword, master.greenlist)]
+    return master
 
 
-def pick(masterlist):
-    unique = get_frequent_unique(masterlist["lst"])
+def pick(master):
+    unique = get_frequent_unique(master.master)
     return unique
+
+
+class WordList:
+    def __init__(self):
+        self.master = []
+        self.blacklist = []
+        self.yellowlist = [[], [], [], [], []]
+        self.greenlist = ["0", "0", "0", "0", "0"]
+
+    def update_lists(self, mst, bl, yl, gl):
+        self.master = mst
+        self.blacklist.extend(bl)
+        self.yellowlist = yl
+        self.greenlist = gl
