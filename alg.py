@@ -95,6 +95,11 @@ def pick(master):
 
 
 class WordList:
+    master: list[str]
+    blacklist: list[str]
+    yellowlist: list[list]
+    greenlist: list[str]
+
     def __init__(self):
         self.master = []
         self.blacklist = []
