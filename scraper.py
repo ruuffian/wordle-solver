@@ -6,6 +6,7 @@ import chromedriver_binary
 import time
 import alg
 import json
+import refine
 
 
 def enter_word(word):
@@ -64,11 +65,12 @@ if __name__ == '__main__':
     # intialize variables
     gamestate = grab_local()
     blacklist = []
-    yellowlist = []
+    yellowlist = [[], [], [], [], []]
     greenlist = ["0", "0", "0", "0", "0"]
     count = 0
     masterlist = alg.WordList()
-    masterlist.update_lists(alg.load_words(), blacklist, yellowlist, greenlist)
+    masterlist.update_lists(blacklist, yellowlist, greenlist)
+    masterlist.refine_list(alg.load_words())
     # loop until game is won or lost
     suggestion = ""
     while gamestate["gameStatus"] == "IN_PROGRESS" and count < 6:
@@ -82,10 +84,9 @@ if __name__ == '__main__':
         # read localstorage to determine what the guess resulted in
         post_word = parse_local(gamestate, guess, masterlist)
         # update blacklistm yellowlist, and greenlist
-        masterlist.update_lists(masterlist.master, post_word["blacklist"], post_word["yellowlist"],
-                                post_word["greenlist"])
+        masterlist.update_lists(post_word["blacklist"], post_word["yellowlist"], post_word["greenlist"])
         # update possible word list
-        masterlist.master = alg.lst_refine(masterlist)
+        masterlist.master = refine.lst_refine(masterlist)
 
         # pick a word and suggest it, loop for next guess
         suggestion = alg.pick(masterlist)
