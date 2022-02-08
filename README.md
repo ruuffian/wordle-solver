@@ -50,7 +50,7 @@ There are some BIG plans for this little project, hopefully some or all of these
     7. Poll Twitter to gather global data on each day's wordle, specifically the copy-paste block 
     that wordle offers
     8. Analyze Twitter data to find regional avgs, common words etc
-    9. DIsplay Twitter info on gitpage
+    9. Display Twitter info on gitpage
 
 ## License
 
