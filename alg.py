@@ -1,3 +1,10 @@
+"""
+Author: ruuffian
+Name: alg.py
+Description:
+    This is the python file containing all of the methods used to analyze the wordpool and pick the best guess.
+"""
+
 from collections import defaultdict
 
 
@@ -23,7 +30,7 @@ class WordList:
 
 
 # Default value for my defualt dictionary
-def def_value():
+def def_value() -> int:
     return 0
 
 

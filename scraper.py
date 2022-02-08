@@ -1,3 +1,10 @@
+"""
+Author: ruuffian
+Name: scraper.py
+Description:
+    This is the python file that interacts with wordle.com using selenium
+"""
+
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.service import Service

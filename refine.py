@@ -4,6 +4,7 @@ Name: refine.py
 Description:
     This is the python file containing all of the methods used to refine the valid wordpool after every guess.
 """
+
 from alg import WordList
 
 
