@@ -39,14 +39,15 @@ All of the I/O is done on the command line, but you can watch the bot enter the 
 
 There are some BIG plans for this little project, hopefully some or all of these come to fruition.
 
-    1. Implement argument validation for word length, unknown characters/symbols etc
-    2. Improve word suggestion algorithm, ideally with more/better datapoints and normalized scores
-    3. Connecting the I/O so that there is a Human mode that waits for input and Bot mode that autocompletes the puzzle
-    4. Frontend display of the bot's pass at each days wordle, hosted on gitpages
-    5. Bot History -basically a history of each day's wordle, with how many tries the bot took
-    6. Poll Twitter to gather global data on each day's wordle, specifically the copy-paste block that wordle offers
-    7. Analyze Twitter data to find regional avgs, common words etc
-    8. DIsplay Twitter info on gitpage
+    1. Rewrite documentation and add some argument sugar to make methods more clear + encapsulate the code better
+    2. Implement argument validation for word length, unknown characters/symbols etc
+    3. Improve word suggestion algorithm, ideally with more/better datapoints and normalized scores
+    4. Connecting the I/O so that there is a Human mode that waits for input and Bot mode that autocompletes the puzzle
+    5. Frontend display of the bot's pass at each days wordle, hosted on gitpages
+    6. Bot History -basically a history of each day's wordle, with how many tries the bot took
+    7. Poll Twitter to gather global data on each day's wordle, specifically the copy-paste block that wordle offers
+    8. Analyze Twitter data to find regional avgs, common words etc
+    9. DIsplay Twitter info on gitpage
 
 ## License
 
