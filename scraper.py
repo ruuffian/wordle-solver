@@ -70,12 +70,9 @@ if __name__ == '__main__':
 
     # intialize variables
     gamestate = grab_local()
-    blacklist = []
-    yellowlist = [[], [], [], [], []]
-    greenlist = ["0", "0", "0", "0", "0"]
+
     count = 0
     masterlist = alg.WordList()
-    masterlist.update_lists(blacklist, yellowlist, greenlist)
     masterlist.refine_list(alg.load_words())
 
     # loop until game is won or lost
