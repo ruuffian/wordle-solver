@@ -22,18 +22,21 @@ def grab_local():
     return json.loads(state)
 
 
-# NEED TO CHANGE FROM DOUBLE ITERATE TO PASSING A COUNT THROUGH METHOD SIG
+# reads the localstorage string for gamestate and guess results
 def parse_local(local, wordin, master):
     guesses = local["boardState"]
     curr = wordin
     i = 0
+
+    # iterates up to the latest guess
     while curr != guesses[i] and i < 5:
         i += 1
     bl = []
     yl = master.yellowlist
     corr = master.greenlist
     j = 0
-    # THIS IS WRONG, NEED TO MODULARIZE THIS
+
+    # checks each letter's result and adds them to the correct list
     for let in wordin:
         if local["evaluations"][i][j] == "correct":
             corr[j] = let
@@ -50,17 +53,21 @@ def parse_local(local, wordin, master):
 
 
 if __name__ == '__main__':
+
     # load chromedriver
-    s = Service("resources/chromedriver.exe")
+    s = Service("chromedriver.exe")
     driver = webdriver.Chrome()
     driver.get("https://www.powerlanguage.co.uk/wordle/")
     time.sleep(1)
+
     # make sure chrome loaded website correctly
     page_title = driver.title
     print(page_title)
+
     # remove annoying popup
     html = driver.find_element(By.TAG_NAME, "html")
     html.click()
+
     # intialize variables
     gamestate = grab_local()
     blacklist = []
@@ -70,20 +77,26 @@ if __name__ == '__main__':
     masterlist = alg.WordList()
     masterlist.update_lists(blacklist, yellowlist, greenlist)
     masterlist.refine_list(alg.load_words())
+
     # loop until game is won or lost
     suggestion = ""
     while gamestate["gameStatus"] == "IN_PROGRESS" and count < 6:
         print("What word would you like to guess?")
         guess = input()
+
         # Need arg validation: no nums, special chars, exactly 5 chars long
         enter_word(guess)
         time.sleep(1)
+
         # grab localstorage
         gamestate = grab_local()
+
         # read localstorage to determine what the guess resulted in
         post_word = parse_local(gamestate, guess, masterlist)
+
         # update blacklistm yellowlist, and greenlist
         masterlist.update_lists(post_word["blacklist"], post_word["yellowlist"], post_word["greenlist"])
+
         # update possible word list
         masterlist.master = refine.lst_refine(masterlist)
 
@@ -94,8 +107,8 @@ if __name__ == '__main__':
             count += 1
     if gamestate["gameStatus"] == "WIN":
         print("Congrats (to me), you got the word right!" + "\n" + suggestion + " was the big ticket winner! GG!")
+
     else:
         print("dang you gotta get better at not making typos")
 
-    driver.close()
     exit(0)

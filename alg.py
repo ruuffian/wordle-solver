@@ -1,10 +1,12 @@
 from collections import defaultdict
 
 
+# Default value for my defualt dictionary
 def def_value():
     return 0
 
 
+# Initializes words from text file, in this case all of Wordle's valid answers
 def load_words():
     with open('resources/valid.txt') as word_file:
         word_set = set(word_file.read().split())
@@ -14,6 +16,7 @@ def load_words():
     return valid_lst
 
 
+# gives each score a uniqueness score based on how many unique letters it contains -faster implementation exists
 def uniqueness_score(wordin):
     score = 5
     letters = defaultdict(def_value)
@@ -23,6 +26,7 @@ def uniqueness_score(wordin):
     return score
 
 
+# Finds the letter frequency for the current word pool, regenerated every guess
 def letter_frequency(master):
     freq = defaultdict(def_value)
     for word in master.master:
@@ -31,6 +35,8 @@ def letter_frequency(master):
     return freq
 
 
+# gives a word a frequency score based on the frequency object of the word pool -more frequent letters = higher score
+# can be improved
 def frequency_score(word, freq):
     score = 0
     for char in word:
@@ -38,6 +44,7 @@ def frequency_score(word, freq):
     return score
 
 
+# finds the best word based on our characteristics: letter frequency and unique letters
 def get_frequent_unique(master):
     freq = letter_frequency(master)
     scores = {}
@@ -52,11 +59,13 @@ def get_frequent_unique(master):
     return maxstr
 
 
+# picks a word to suggest to the user
 def pick(master):
     unique = get_frequent_unique(master)
     return unique
 
 
+# Data class used to store all the game information in one place
 class WordList:
     master: list[str]
     blacklist: list[str]
