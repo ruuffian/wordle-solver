@@ -6,25 +6,40 @@ import time
 import alg
 import json
 import refine
+from alg import WordList
 
 
 def enter_word(word):
-    # Types and enters a word
+    """
+    Uses selenium's send_keys method to input a word
+    :param word: The word to be input
+    :return: void
+    """
     html.send_keys(word)
     html.send_keys(Keys.ENTER)
     time.sleep(1)
 
 
-def grab_local():
-    # Pull gamestate from localstorage
+def grab_gamestate():
+    """
+    Uses javascript and the execute_script method to gain access to Wordle's local storage
+    :return: json-ified data from localstorage, specifically gameState
+    """
     local = driver.execute_script("return localStorage")
     state = local["gameState"]
     return json.loads(state)
 
 
-# reads the localstorage string for gamestate and guess results
-def parse_local(local, wordin, master):
-    guesses = local["boardState"]
+def check_wordle(localstate: dict, wordin: str, master: WordList) -> dict:
+    """
+    Checks the result from the current guess, parsing letters into the black, yellow, and
+    greenlists where appropriate
+    :param localstate: json-ified string from localstorage[gamestate]
+    :param wordin: The current guess
+    :param master: The master WordList
+    :return: New black/yellow/green lists based on the guessed word
+    """
+    guesses = localstate["boardState"]
     curr = wordin
     i = 0
 
@@ -38,9 +53,9 @@ def parse_local(local, wordin, master):
 
     # checks each letter's result and adds them to the correct list
     for let in wordin:
-        if local["evaluations"][i][j] == "correct":
+        if localstate["evaluations"][i][j] == "correct":
             corr[j] = let
-        elif local["evaluations"][i][j] == "present":
+        elif localstate["evaluations"][i][j] == "present":
             yl[j].append(let)
         else:
             bl.append(let)
@@ -69,7 +84,7 @@ if __name__ == '__main__':
     html.click()
 
     # intialize variables
-    gamestate = grab_local()
+    gamestate = grab_gamestate()
 
     count = 0
     masterlist = alg.WordList()
@@ -84,17 +99,13 @@ if __name__ == '__main__':
         # Need arg validation: no nums, special chars, exactly 5 chars long
         enter_word(guess)
         time.sleep(1)
+        gamestate = grab_gamestate()
+        word_results = check_wordle(gamestate, guess, masterlist)
 
-        # grab localstorage
-        gamestate = grab_local()
+        # update blacklist, yellowlist, and greenlist
+        masterlist.update_lists(word_results["blacklist"], word_results["yellowlist"], word_results["greenlist"])
 
-        # read localstorage to determine what the guess resulted in
-        post_word = parse_local(gamestate, guess, masterlist)
-
-        # update blacklistm yellowlist, and greenlist
-        masterlist.update_lists(post_word["blacklist"], post_word["yellowlist"], post_word["greenlist"])
-
-        # update possible word list
+        # update wordpool
         masterlist.master = refine.lst_refine(masterlist)
 
         # pick a word and suggest it, loop for next guess
@@ -102,6 +113,7 @@ if __name__ == '__main__':
         if gamestate["gameStatus"] == "IN_PROGRESS":
             print("I suggest this word- " + suggestion)
             count += 1
+
     if gamestate["gameStatus"] == "WIN":
         print("Congrats (to me), you got the word right!" + "\n" + suggestion + " was the big ticket winner! GG!")
 
