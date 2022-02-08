@@ -42,8 +42,8 @@ def check_greenlist_positions(curword, grn):
 
 
 def lst_refine(master):
-    removechars = [lstword for lstword in master.master if
-                   check_blacklist_and_yellowlist(lstword, master.blacklist, master.yellowlist)]
-    yellowposchecked = [lstword for lstword in removechars if check_yellow_positions(lstword, master.yellowlist)]
-    refined = [lstword for lstword in yellowposchecked if check_greenlist_positions(lstword, master.greenlist)]
+    refined = [lstword for lstword in master.master
+               if check_blacklist_and_yellowlist(lstword, master.blacklist, master.yellowlist)
+               and check_yellow_positions(lstword, master.yellowlist)
+               and check_greenlist_positions(lstword, master.greenlist)]
     return refined
