@@ -5,7 +5,7 @@ algorithm, similar to the one behind the impossible hangman game. The only optim
 the word quicker is prioritizing words with unique letters in order to guess more unguessed letters, 
 and prioritizing words that have letters with higher density scores.
 
-### How to Use
+### How to Use the Manual Script
 
 You can start with any word but I have included two suggestions that contain multiple vowels. The script will
 then prompt you for wordle output. This is a 5 letter string that gives information on what letters are in the word,
@@ -29,3 +29,8 @@ Here are some wordle outputs with screenshots of the wordle screen.
 
 Upon successfull word guess, input `ccccc` and the script will tell you how many tries it took. Feel free to pr
 or submit issues!
+
+### How to Use the Automated Input Script
+
+This script is muhc easier to use. It will suggest a word based on the game state, but ultimately will accept any word that you give it.
+All of the I/O is done on the command line, but you can watch the bot enter the words in the browser that it opens up on runtime.
