@@ -46,6 +46,10 @@ def load_words() -> list:
         valid_lst = []
         for val in word_set:
             valid_lst.append(val.strip(','))
+    with open('resources/answers.txt') as word_file:
+        word_set = set(word_file.read().split())
+        for val in word_set:
+            valid_lst.append(val.strip(','))
     return valid_lst
 
 

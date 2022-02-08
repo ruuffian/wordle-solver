@@ -6,7 +6,7 @@ def def_value():
 
 
 def load_words():
-    with open('resources/valid.txt') as word_file:
+    with open('resources/answers.txt') as word_file:
         word_set = set(word_file.read().split())
     valid_words = [val for val in word_set if len(val) == 5]
     return valid_words
