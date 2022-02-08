@@ -2,7 +2,6 @@ from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.service import Service
 from selenium import webdriver
-import chromedriver_binary
 import time
 import alg
 import json
@@ -19,8 +18,8 @@ def enter_word(word):
 def grab_local():
     # Pull gamestate from localstorage
     local = driver.execute_script("return localStorage")
-    gamestate = local["gameState"]
-    return json.loads(gamestate)
+    state = local["gameState"]
+    return json.loads(state)
 
 
 # NEED TO CHANGE FROM DOUBLE ITERATE TO PASSING A COUNT THROUGH METHOD SIG
@@ -52,7 +51,7 @@ def parse_local(local, wordin, master):
 
 if __name__ == '__main__':
     # load chromedriver
-    s = Service(chromedriver_binary.chromedriver_filename)
+    s = Service("chromedriver.exe")
     driver = webdriver.Chrome()
     driver.get("https://www.powerlanguage.co.uk/wordle/")
     time.sleep(1)
@@ -90,8 +89,9 @@ if __name__ == '__main__':
 
         # pick a word and suggest it, loop for next guess
         suggestion = alg.pick(masterlist)
-        print("I suggest this word- " + suggestion)
-        count += 1
+        if gamestate["gameStatus"] == "IN_PROGRESS":
+            print("I suggest this word- " + suggestion)
+            count += 1
     if gamestate["gameStatus"] == "WIN":
         print("Congrats (to me), you got the word right!" + "\n" + suggestion + " was the big ticket winner! GG!")
     else:
