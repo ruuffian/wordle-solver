@@ -6,6 +6,7 @@ Description:
 """
 
 from collections import defaultdict
+from heapq import nlargest
 
 
 class WordList:
@@ -147,7 +148,7 @@ def frequencies(master: WordList, freq: defaultdict) -> defaultdict:
     return fscores
 
 
-def pick(master: WordList) -> str:
+def pick(master: WordList) -> dict:
     """
     Gives each word in the wordpool a score based on its letter frequency and the number of unique letters,
     then returns the one with the highest score
@@ -155,22 +156,25 @@ def pick(master: WordList) -> str:
     create an optimal tree
     Frequent letters are preferred because they also elminate more words
     :param master: The master WordList, essentially the game state
-    :return: str -the word in the wordpool with the highest calculated score
+    :return: dict -the 5 words with the highest calculated score
     """
     freq = letter_frequency(master)
     uscores = uniques(master)
     fscores = frequencies(master, freq)
+    # normalize the characteristic scores
     norm_uscores = normalization(uscores)
     norm_fscores = normalization(fscores)
+    # combine the scores
+    nnorm_combine = {}
+    for nscore in norm_uscores:
+        nnorm_combine[nscore] = norm_uscores[nscore] + .5*norm_fscores[nscore]
+    final_norm_scores = normalization(nnorm_combine)
     scores = {}
     # We want to weigh the uniqueness score more heavily than the frequency
     for word in master.master:
-        scores[word] = round((norm_uscores[word] + norm_fscores[word]) / 2., 2)
-    maxscr = 0
-    maxstr = ""
-    for key in scores:
-        if scores[key] > maxscr:
-            maxscr = scores[key]
-            maxstr = key
-    print(scores[maxstr])
-    return maxstr
+        scores[word] = final_norm_scores[word]
+    largest = nlargest(5, scores, key=scores.get)
+    ldict = {}
+    for maxx in largest:
+        ldict[maxx] = scores[maxx]
+    return ldict

@@ -14,6 +14,7 @@ import alg
 import json
 import refine
 from alg import WordList
+from heapq import nlargest
 
 
 def enter_word(word):
@@ -116,9 +117,9 @@ if __name__ == '__main__':
         masterlist.master = refine.lst_refine(masterlist)
 
         # pick a word and suggest it, loop for next guess
-        suggestion = alg.pick(masterlist)
+        suggestions = alg.pick(masterlist)
         if gamestate["gameStatus"] == "IN_PROGRESS":
-            print("I suggest this word- " + suggestion)
+            print("Here are the 5 highest scoring words left in the wordpool:: \n" + str(suggestions))
             count += 1
 
     if gamestate["gameStatus"] == "WIN":
