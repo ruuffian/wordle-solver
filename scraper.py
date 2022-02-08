@@ -51,7 +51,7 @@ def parse_local(local, wordin, master):
 
 if __name__ == '__main__':
     # load chromedriver
-    s = Service("chromedriver.exe")
+    s = Service("resources/chromedriver.exe")
     driver = webdriver.Chrome()
     driver.get("https://www.powerlanguage.co.uk/wordle/")
     time.sleep(1)
