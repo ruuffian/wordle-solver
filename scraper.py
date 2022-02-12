@@ -127,5 +127,11 @@ if __name__ == '__main__':
 
     else:
         print("dang you gotta get better at not making typos")
-
+    print("Finished?")
+    input()
+    driver.close()
     exit(0)
+#
+
+
+# Man fuck the NYTimes

@@ -41,9 +41,9 @@ def load_words() -> list:
     Initializes the wordpool with all of Wordles valid answers, stored in a text file
     :return: List of words pulled from text file
     """
+    valid_lst = []
     with open('resources/valid.txt') as word_file:
         word_set = set(word_file.read().split())
-        valid_lst = []
         for val in word_set:
             valid_lst.append(val.strip(','))
     with open('resources/answers.txt') as word_file:
