@@ -36,16 +36,18 @@ def def_value() -> int:
 
 
 # Initializes words from text file, in this case all of Wordle's valid answers
-def load_words() -> list:
+def load_words(flag: bool) -> list:
     """
     Initializes the wordpool with all of Wordles valid answers, stored in a text file
+    :param flag: Boolean flag to enable or disable the full word pool
     :return: List of words pulled from text file
     """
     valid_lst = []
-    with open('resources/valid.txt') as word_file:
-        word_set = set(word_file.read().split())
-        for val in word_set:
-            valid_lst.append(val.strip(','))
+    if flag == 1:
+        with open('resources/valid.txt') as word_file:
+            word_set = set(word_file.read().split())
+            for val in word_set:
+                valid_lst.append(val.strip(','))
     with open('resources/answers.txt') as word_file:
         word_set = set(word_file.read().split())
         for val in word_set:
@@ -171,7 +173,7 @@ def pick(master: WordList) -> dict:
     # combine the scores
     nnorm_combine = {}
     for nscore in norm_uscores:
-        nnorm_combine[nscore] = norm_uscores[nscore] + .5*norm_fscores[nscore]
+        nnorm_combine[nscore] = norm_uscores[nscore] + .5 * norm_fscores[nscore]
     final_norm_scores = normalization(nnorm_combine)
     scores = {}
     # We want to weigh the uniqueness score more heavily than the frequency

@@ -76,7 +76,8 @@ def check_wordle(localstate: dict, wordin: str, master: WordList) -> dict:
 
 
 if __name__ == '__main__':
-
+    print("With entire pool? (1/0)")
+    flag = input()
     # load chromedriver
     s = Service("chromedriver.exe")
     driver = webdriver.Chrome()
@@ -96,7 +97,7 @@ if __name__ == '__main__':
 
     count = 0
     masterlist = alg.WordList()
-    masterlist.refine_list(alg.load_words())
+    masterlist.refine_list(alg.load_words(flag))
 
     # loop until game is won or lost
     suggestion = ""
@@ -123,7 +124,7 @@ if __name__ == '__main__':
             count += 1
 
     if gamestate["gameStatus"] == "WIN":
-        print("Congrats (to me), you got the word right!" + "\n" + suggestion + " was the big ticket winner! GG!")
+        print("Congrats (to me), you got the word right!" + "\n" + guess + " was the big ticket winner! GG!")
 
     else:
         print("dang you gotta get better at not making typos")
