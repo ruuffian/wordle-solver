@@ -32,7 +32,7 @@ submit issues!
 
 ## How to Use the Automated Input Script
 
-This script is muhc easier to use. It will suggest a word based on the game state, but ultimately will accept any word
+This script is much easier to use. It will suggest a word based on the game state, but ultimately will accept any word
 that you give it. All of the I/O is done on the command line, but you can watch the bot enter the words in the browser
 that it opens up on runtime.
 
