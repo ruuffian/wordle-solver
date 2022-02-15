@@ -34,7 +34,7 @@ def grab_gamestate():
     :return: json-ified data from localstorage, specifically gameState
     """
     local = driver.execute_script("return localStorage")
-    state = local["gameState"]
+    state = local["nyt-wordle-state"]
     return json.loads(state)
 
 
@@ -131,7 +131,3 @@ if __name__ == '__main__':
     input()
     driver.close()
     exit(0)
-#
-
-
-# Man fuck the NYTimes
