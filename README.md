@@ -42,6 +42,7 @@ There are some BIG plans for this little project, hopefully some or all of these
 
 - [x] Rewrite documentation and add some argument sugar to make methods more clear + encapsulate the code better
 - [ ] Implement argument validation for word length, unknown characters/symbols etc
+- [ ] Refactor project structure to be more exlpicit in what each module does, reduce cross-contamination of .py files
 - [ ] Improve word suggestion algorithm, ideally with more/better datapoints and normalized scores
 - [ ] Connecting the I/O so that there is a Human mode that waits for input and Bot mode that autocompletes the puzzle
 - [ ] Frontend display of the bot's pass at each days wordle, hosted on gitpages
