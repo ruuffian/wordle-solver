@@ -6,7 +6,7 @@ def def_value():
 
 
 def load_words():
-    with open('resources/answers.txt') as word_file:
+    with open('resources/solutions.txt') as word_file:
         word_set = set(word_file.read().split())
     valid_words = [val for val in word_set if len(val) == 5]
     return valid_words
@@ -52,10 +52,10 @@ def density_score(word, dnsty):
     return score
 
 
-def get_densest_unique(wordlist):
-    density = letter_density(wordlist)
+def get_densest_unique(WordleState):
+    density = letter_density(WordleState)
     values = {}
-    for i in wordlist:
+    for i in WordleState:
         values[i] = (uniqueness_score(i) ** 2) * density_score(i, density)
     tmp = 0
     maxstr = ""
@@ -93,12 +93,12 @@ if __name__ == '__main__':
         print("What was the wordle output?")
         wordle = input()
         try:
-            masterlst = lst_refine(unique, masterlst["lst"], masterlst["blacklist"],
-                                   masterlst["yellow"], masterlst["correct"])
+            mainlst = lst_refine(unique, mainlst["lst"], mainlst["blacklist"],
+                                   mainlst["yellow"], mainlst["correct"])
         except NameError:
-            masterlst = lst_refine(usrin, load_words(), [], [], ["0", "0", "0", "0", "0"])
+            mainlst = lst_refine(usrin, load_words(), [], [], ["0", "0", "0", "0", "0"])
         finally:
-            unique = get_densest_unique(masterlst["lst"])
+            unique = get_densest_unique(mainlst["lst"])
             if "y" not in wordle and "b" not in wordle:
                 print("Congratulations! We got the answer in " + str(count) + " tries!!")
                 break

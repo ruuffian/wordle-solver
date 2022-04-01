@@ -2,7 +2,7 @@
 Author: ruuffian
 Name: scraper.py
 Description:
-    This is the python file that interacts with wordle.com using selenium
+    Methods for scraping data from wordle.com, used to programmatically solve Wordle puzzles.
 """
 
 from selenium.webdriver import Keys
@@ -10,14 +10,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.service import Service
 from selenium import webdriver
 import time
-import alg
+import wordlist
 import json
-import refine
-from alg import WordList
-from heapq import nlargest
+from wordlist import WordleState
 
 
-def enter_word(word):
+def enter_word(word: str):
     """
     Uses selenium's send_keys method to input a word
     :param word: The word to be input
@@ -28,23 +26,23 @@ def enter_word(word):
     time.sleep(1)
 
 
-def grab_gamestate():
+def gamestate():
     """
-    Uses javascript and the execute_script method to gain access to Wordle's local storage
-    :return: json-ified data from localstorage, specifically gameState
+    Accesses wordle.com's LocalStorate with selenium's execute_script function.
+    :return: json-ified data from localstorage["nyt-wordle-state]
     """
     local = driver.execute_script("return localStorage")
     state = local["nyt-wordle-state"]
     return json.loads(state)
 
 
-def check_wordle(localstate: dict, wordin: str, master: WordList) -> dict:
+def check_wordle(localstate: dict, wordin: str, master: WordleState) -> dict:
     """
     Checks the result from the current guess, parsing letters into the black, yellow, and
     greenlists where appropriate
     :param localstate: json-ified string from localstorage[gamestate]
     :param wordin: The current guess
-    :param master: The master WordList
+    :param master: The master WordleState
     :return: New black/yellow/green lists based on the guessed word
     """
     guesses = localstate["boardState"]
@@ -76,8 +74,6 @@ def check_wordle(localstate: dict, wordin: str, master: WordList) -> dict:
 
 
 if __name__ == '__main__':
-    print("With entire pool? (1/0)")
-    flag = input()
     # load chromedriver
     s = Service("chromedriver.exe")
     driver = webdriver.Chrome()
@@ -93,11 +89,11 @@ if __name__ == '__main__':
     html.click()
 
     # intialize variables
-    gamestate = grab_gamestate()
+    gamestate = gamestate()
 
     count = 0
-    masterlist = alg.WordList()
-    masterlist.refine_list(alg.load_words(flag))
+    mainlist = wordlist.WordleState()
+    mainlist.replace_list(wordlist.load_words(True))
 
     # loop until game is won or lost
     suggestion = ""
@@ -108,17 +104,17 @@ if __name__ == '__main__':
         # Need arg validation: no nums, special chars, exactly 5 chars long
         enter_word(guess)
         time.sleep(1)
-        gamestate = grab_gamestate()
-        word_results = check_wordle(gamestate, guess, masterlist)
+        gamestate = gamestate()
+        word_results = check_wordle(gamestate, guess, mainlist)
 
         # update blacklist, yellowlist, and greenlist
-        masterlist.update_lists(word_results["blacklist"], word_results["yellowlist"], word_results["greenlist"])
+        mainlist.update_lists(word_results["blacklist"], word_results["yellowlist"], word_results["greenlist"])
 
         # update wordpool
-        masterlist.master = refine.lst_refine(masterlist)
+        mainlist.master = wordlist.lst_refine(mainlist)
 
         # pick a word and suggest it, loop for next guess
-        suggestions = alg.pick(masterlist)
+        suggestions = wordlist.pick(mainlist)
         if gamestate["gameStatus"] == "IN_PROGRESS":
             print("Here are the 5 highest scoring words left in the wordpool:: \n" + str(suggestions))
             count += 1

@@ -1,11 +1,50 @@
 """
 Author: ruuffian
-Name: refine.py
+Name: wordlist.py
 Description:
-    This is the python file containing all of the methods used to refine the valid wordpool after every guess.
+    Definition of WordleState object and related methods.
 """
 
-from alg import WordList
+
+class WordleState:
+    main: list[str]
+    blacklist: list[str]
+    yellowlist: list[list[str]]
+    greenlist: list[str]
+
+    def __init__(self):
+        self.main = []
+        self.blacklist = []
+        self.yellowlist = [[""]] * 5
+        self.greenlist = ["0"] * 5
+
+    def update_lists(self, bl, yl, gl):
+        self.blacklist.extend(bl)
+        self.yellowlist = yl
+        self.greenlist = gl
+
+    def refine_list(self):
+        return lst_refine(self)
+
+
+# Initializes words from text file, in this case all of Wordle's valid answers
+def load_words(flag: bool) -> list:
+    """
+    Initializes the wordpool with all of Wordles valid answers, stored in a text file
+    :param flag: Boolean flag to enable or disable the full word pool
+    :return: List of words pulled from text file
+    """
+    valid_lst = []
+    if flag == 1:
+        with open('resources/solutions.txt') as word_file:
+            word_set = set(word_file.read().split())
+            for val in word_set:
+                valid_lst.append(val.strip(','))
+    with open('resources/accepted.txt') as word_file:
+        word_set = set(word_file.read().split())
+        for val in word_set:
+            valid_lst.append(val.strip(','))
+    return valid_lst
 
 
 def check_blacklist_and_yellowlist(curword: str, blck: list, yllw: list) -> bool:
@@ -17,7 +56,7 @@ def check_blacklist_and_yellowlist(curword: str, blck: list, yllw: list) -> bool
     :param curword: The current word from the wordpool
     :param blck: List of absent letters
     :param yllw: List of present letters and the positions they are NOT in
-    :return: Bool -false if word is illegal, true otherwise
+    :return: Bool -false if word contains blacklisted or doesnt contain yellowlisted letters, true otherwise
     """
     unique = []
     # This loop checks the blaclisted letters and removes words that contain them
@@ -45,7 +84,7 @@ def check_yellow_positions(curword: str, yllw: list) -> bool:
     positions
     :param curword: The currently word from the wordpool
     :param yllw: List of present words
-    :return: Bool -True if false if word is illegal, true otherwise
+    :return: Bool -False if word doesnt contain yellow letters, true otherwise
     """
     i = 0
     for pos in yllw:
@@ -60,7 +99,7 @@ def check_greenlist_positions(curword: str, grn: list) -> bool:
     Checks the greenlist positions to ensure every word has a green letter in the correct positions
     :param curword: The current word from the word pool
     :param grn: Array representing the correct letters
-    :return: Bool -false if the word is illegal, true otherwise
+    :return: Bool -false if the word does not contain green letters, true otherwise
     """
     for i in range(5):
         # Checks if a letter has been guessed and then if the word matches the correct guess
@@ -69,16 +108,16 @@ def check_greenlist_positions(curword: str, grn: list) -> bool:
     return True
 
 
-def lst_refine(master: WordList) -> list:
+def lst_refine(main: WordleState) -> list:
     """
     Uses a large list comprehension in order to trim the wordpool based on newly gathered information
     about the correct answer
-    :param master: WordList object containing all of the relevant gamestate information such as the blacklist,
+    :param main: WordleState object containing all of the relevant gamestate information such as the blacklist,
     yellowlist, greenlist, and wordpool
     :return: List -Narrowed down wordpool
     """
-    refined = [lstword for lstword in master.master
-               if check_blacklist_and_yellowlist(lstword, master.blacklist, master.yellowlist)
-               and check_yellow_positions(lstword, master.yellowlist)
-               and check_greenlist_positions(lstword, master.greenlist)]
+    refined = [lstword for lstword in main.main
+               if check_blacklist_and_yellowlist(lstword, main.blacklist, main.yellowlist)
+               and check_yellow_positions(lstword, main.yellowlist)
+               and check_greenlist_positions(lstword, main.greenlist)]
     return refined
