@@ -17,56 +17,38 @@ def def_value() -> int:
     return 0
 
 
-def uniqueness_score(wordin: str) -> int:
+def uniqueness_score(word: str) -> int:
     """
-    Calculates a score for the input string based on how many unique letters it contains.
-    More unique letters means a higher score.
-    A defualtdict is used to handle the first occurence of a letter and assign it 0
-    :param wordin: 5 letter word to be scored
-    :return: int -uniqueness score
+    Calculates a words uniquness score. More unique letters = higher score.
+    :param word: The word to be evaluated.
+    :return: The calculated uniquness score.
     """
-    score = 5
+    score = len(word)
     letters = defaultdict(def_value)
-    for i in range(5):
-        letters[wordin[i]] += 1
-        score -= letters[wordin[i]] - 1
+    for i in range(len(word)):
+        letters[word[i]] += 1
+        score -= letters[word[i]] - 1
     return score
 
 
-def uniques(main: WordleState) -> defaultdict:
+def uniques(word_list: list[str]) -> defaultdict:
     """
     Creates and returns a defaultdict of every word's uniqueness score
-    Used to normalize the scores
-    :param main: main WordleState, essentially the entire game state
-    :return: defaultdict -holds uniqueness scores keyed to the words, as well as a min and max value
+    :param word_list: List of all legal words.
+    :return: dictionary of words:uniqueness_score
     """
     uscores = defaultdict(def_value)
-    for word in main.main:
+    for word in word_list:
         uscores[word] = uniqueness_score(word)
     return uscores
 
 
-def letter_frequency(main: WordleState) -> defaultdict:
+def f_score(word: str, freq: defaultdict) -> int:
     """
-    Creates a defaultdict of values that are each letter frequency scores
-    More occurences means a higher frequency
-    :param main: The main WordleState, essentially the gamestate
-    :return: defaultdict -a dictionary containing all the letter frequency scores
-    """
-    freq = defaultdict(def_value)
-    for word in main.main:
-        for char in word:
-            freq[char] += 1
-    return freq
-
-
-def frequency_score(word: str, freq: defaultdict) -> int:
-    """
-    Scores the input word based on a generated frequency dictionary
-    More letters with high frequency means a higher frequency score
-    :param word: The string to be scored
-    :param freq: The frequency dictionary for the current wordpool
-    :return:
+    Calculates a given words frequency score.
+    :param word: The word being evaluated.
+    :param freq: A dictionary of letter:frequency.
+    :return: Sum of f_scores in a given word.
     """
     score = 0
     for char in word:
@@ -74,43 +56,51 @@ def frequency_score(word: str, freq: defaultdict) -> int:
     return score
 
 
-def frequencies(main: WordleState, freq: defaultdict) -> defaultdict:
+def frequency_scores(word_list: list[str], freq: defaultdict) -> defaultdict:
     """
-    Creates a defaultdict holding every frequency score keyed to the word
-    Used to normalize the scores
-    :param main: main WordleState, essentially the gamestate
+    Calculates the frequency score for every word in the legal wordpool.
+    :param word_list: List of legal words.
     :param freq: frequency dictionary for the wordpool
-    :return: defaultdict -holds frequency scores for the words, as well as a min and max value
+    :return: A dictionary of word:frequency_score.
     """
     fscores = defaultdict(def_value)
-    for word in main.main:
-        fscores[word] = frequency_score(word, freq)
+    for word in word_list:
+        fscores[word] = f_score(word, freq)
     return fscores
 
 
-def pick(main: WordleState) -> dict:
+def letter_frequency(word_list: list[str]) -> defaultdict:
     """
-    Gives each word in the wordpool a score based on its letter frequency and the number of unique letters,
-    then returns the one with the highest score
-    Unique letters are preferred because they are easier to implement than doing some sort of DFS alg to
-    create an optimal tree
-    Frequent letters are preferred because they also elminate more words
-    :param main: The main WordleState, essentially the game state
-    :return: dict -the 3 words with the highest calculated score
+    Counts the frequency of every letter based on the legal word pool.
+    :param word_list: List of all legal words.
+    :return: A dictionary of letter:frequency.
     """
-    freq = letter_frequency(main)
-    uniq_scores = uniques(main)
-    freq_scores = frequencies(main, freq)
+    freq = defaultdict(def_value)
+    for word in word_list:
+        for char in word:
+            freq[char] += 1
+    return freq
+
+
+def pick(algstate: WordleState) -> dict:
+    """
+    Picks the 3 highest scoring words in the legal word pool given the current state of the puzzle.
+    Scores are determined based on two factors:
+        Frequency: Words with letters that appear more frequently in the list of remaining words are
+        prefered because information about those letters will tend to elmininate more words.
+        Uniqueness: Words with 5 unique letters tend to give more information than those with repeat letters.
+    :param algstate: The state of the algorithm.
+    :return: A dictionary of word:score containing the three highest scoring words.
+    """
+    freq = letter_frequency(algstate.pool)
+    uniq_scores = uniques(algstate.pool)
+    freq_scores = frequency_scores(algstate.pool, freq)
     # combine the scores
     combined = {}
-    for word in main.main:
+    for word in algstate.pool:
         combined[word] = uniq_scores[word] + .5 * freq_scores[word]
-    scores = {}
-    # We want to weigh the uniqueness score more heavily than the frequency
-    for word in main.main:
-        scores[word] = combined[word]
-    largest = nlargest(3, scores, key=scores.get)
+    largest = nlargest(3, combined, key=combined.get)
     ldict = {}
     for maxx in largest:
-        ldict[maxx] = scores[maxx]
+        ldict[maxx] = combined[maxx]
     return ldict

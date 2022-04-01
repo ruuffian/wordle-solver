@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.service import Service
 from selenium import webdriver
 import time
-import wordlist
+import wordlist as wordle
 import json
 from wordlist import WordleState
 
@@ -92,38 +92,10 @@ if __name__ == '__main__':
     gamestate = gamestate()
 
     count = 0
-    mainlist = wordlist.WordleState()
-    mainlist.replace_list(wordlist.load_words(True))
-
+    mainlist = wordle.WordleState()
+    mainlist.update_info(wordle.load_words(True))
     # loop until game is won or lost
     suggestion = ""
-    while gamestate["gameStatus"] == "IN_PROGRESS" and count < 6:
-        print("What word would you like to guess?")
-        guess = input()
-
-        # Need arg validation: no nums, special chars, exactly 5 chars long
-        enter_word(guess)
-        time.sleep(1)
-        gamestate = gamestate()
-        word_results = check_wordle(gamestate, guess, mainlist)
-
-        # update blacklist, yellowlist, and greenlist
-        mainlist.update_lists(word_results["blacklist"], word_results["yellowlist"], word_results["greenlist"])
-
-        # update wordpool
-        mainlist.master = wordlist.lst_refine(mainlist)
-
-        # pick a word and suggest it, loop for next guess
-        suggestions = wordlist.pick(mainlist)
-        if gamestate["gameStatus"] == "IN_PROGRESS":
-            print("Here are the 5 highest scoring words left in the wordpool:: \n" + str(suggestions))
-            count += 1
-
-    if gamestate["gameStatus"] == "WIN":
-        print("Congrats (to me), you got the word right!" + "\n" + guess + " was the big ticket winner! GG!")
-
-    else:
-        print("dang you gotta get better at not making typos")
     print("Finished?")
     input()
     driver.close()

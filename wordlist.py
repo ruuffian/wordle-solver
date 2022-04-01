@@ -7,18 +7,18 @@ Description:
 
 
 class WordleState:
-    main: list[str]
+    pool: list[str]
     blacklist: list[str]
     yellowlist: list[list[str]]
     greenlist: list[str]
 
     def __init__(self):
-        self.main = []
+        self.pool = []
         self.blacklist = []
         self.yellowlist = [[""]] * 5
         self.greenlist = ["0"] * 5
 
-    def update_lists(self, bl, yl, gl):
+    def update_info(self, bl, yl, gl):
         self.blacklist.extend(bl)
         self.yellowlist = yl
         self.greenlist = gl
@@ -116,7 +116,7 @@ def lst_refine(main: WordleState) -> list:
     yellowlist, greenlist, and wordpool
     :return: List -Narrowed down wordpool
     """
-    refined = [lstword for lstword in main.main
+    refined = [lstword for lstword in main.pool
                if check_blacklist_and_yellowlist(lstword, main.blacklist, main.yellowlist)
                and check_yellow_positions(lstword, main.yellowlist)
                and check_greenlist_positions(lstword, main.greenlist)]
