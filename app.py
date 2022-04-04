@@ -13,21 +13,21 @@ from wordlist import WordleState
 import wrd_alg as alg
 
 
-def check_wordle(localstate: dict, word: str, alg: WordleState) -> dict:
+def check_wordle(state: WordleState, n_state: dict, word: str, ) -> dict:
     """
     Checks the result from the current guess, parsing letters into the black, yellow, and
     greenlists where appropriate
-    :param localstate: json-ified string from localstorage[gamestate]
-    :param word: The current guess
-    :param alg: Current WordleState
+    :param state: Old WordleState
+    :param n_state: New info scraped from wordle.com after :param word was input
+    :param word: The most recent guess
     :return: New black/yellow/green lists based on the guessed word
     """
-    board = localstate["boardState"]
-    evaluations = localstate["evaluations"]
+    board = n_state["boardState"]
+    evaluations = n_state["evaluations"]
     i = 0
     bl = []
-    yl = alg.yellowlist
-    corr = alg.greenlist
+    yl = state.yellowlist
+    corr = state.greenlist
 
     # iterates up to the latest guess
     while board[i] != word and i < 5:
@@ -65,6 +65,8 @@ def validate(word: str, a_state: WordleState) -> bool:
 
 
 if __name__ == '__main__':
+    site
+
     count = 0
     gamestate = site.gamestate()
     print("Welcome to ruuffian's Wordle solver!")
@@ -85,7 +87,7 @@ if __name__ == '__main__':
         site.enter_word(guess)
         time.sleep(.5)
         gamestate = gamestate()
-        word_results = check_wordle(gamestate, guess, algstate)
+        word_results = check_wordle(algstate, gamestate, guess)
         # update blacklist, yellowlist, and greenlist
         algstate.update_info(word_results["blacklist"], word_results["yellowlist"], word_results["greenlist"])
 

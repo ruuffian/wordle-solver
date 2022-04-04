@@ -10,9 +10,20 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.service import Service
 from selenium import webdriver
 import time
-import wordlist as wordle
 import json
-from wordlist import WordleState
+
+
+# load chromedriver
+s = Service("chromedriver.exe")
+driver = webdriver.Chrome()
+driver.get("https://www.powerlanguage.co.uk/wordle/")
+time.sleep(1)
+# make sure chrome loaded website correctly
+page_title = driver.title
+print(page_title)
+# remove annoying popup
+html = driver.find_element(By.TAG_NAME, "html")
+html.click()
 
 
 def enter_word(word: str):
@@ -36,30 +47,4 @@ def gamestate():
     return json.loads(state)
 
 
-if __name__ == '__main__':
-    # load chromedriver
-    s = Service("chromedriver.exe")
-    driver = webdriver.Chrome()
-    driver.get("https://www.powerlanguage.co.uk/wordle/")
-    time.sleep(1)
 
-    # make sure chrome loaded website correctly
-    page_title = driver.title
-    print(page_title)
-
-    # remove annoying popup
-    html = driver.find_element(By.TAG_NAME, "html")
-    html.click()
-
-    # intialize variables
-    gamestate = gamestate()
-
-    count = 0
-    mainlist = wordle.WordleState()
-    mainlist.update_info(wordle.load_words(True))
-    # loop until game is won or lost
-    suggestion = ""
-    print("Finished?")
-    input()
-    driver.close()
-    exit(0)
