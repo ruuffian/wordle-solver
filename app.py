@@ -10,6 +10,44 @@ import scraper as site
 import time
 import wordlist as wordle
 from wordlist import WordleState
+import wrd_alg as alg
+
+
+def check_wordle(localstate: dict, word: str, alg: WordleState) -> dict:
+    """
+    Checks the result from the current guess, parsing letters into the black, yellow, and
+    greenlists where appropriate
+    :param localstate: json-ified string from localstorage[gamestate]
+    :param word: The current guess
+    :param alg: Current WordleState
+    :return: New black/yellow/green lists based on the guessed word
+    """
+    board = localstate["boardState"]
+    evaluations = localstate["evaluations"]
+    i = 0
+    bl = []
+    yl = alg.yellowlist
+    corr = alg.greenlist
+
+    # iterates up to the latest guess
+    while board[i] != word and i < 5:
+        i += 1
+
+    j = 0
+    # checks each letter's result and adds them to the correct list
+    for char in word:
+        if evaluations[i][j] == "correct":
+            corr[j] = char
+        elif evaluations[i][j] == "present":
+            yl[j].append(char)
+        else:
+            bl.append(char)
+        j += 1
+    return {
+        "blacklist": bl,
+        "yellowlist": yl,
+        "greenlist": corr,
+    }
 
 
 def validate(word: str, a_state: WordleState) -> bool:
@@ -35,6 +73,7 @@ if __name__ == '__main__':
           "Crane"
           "Taste")
     algstate = wordle.WordleState()
+
     while gamestate["gameStatus"] != "FINISHED":
         print("What word would you like to guess?")
         guess = input()
@@ -46,21 +85,20 @@ if __name__ == '__main__':
         site.enter_word(guess)
         time.sleep(.5)
         gamestate = gamestate()
-
+        word_results = check_wordle(gamestate, guess, algstate)
         # update blacklist, yellowlist, and greenlist
         algstate.update_info(word_results["blacklist"], word_results["yellowlist"], word_results["greenlist"])
 
-        # update wordpool
-        algstate.pool = wordlist.lst_refine(algstate)
+        # update pool
+        algstate.refine_list()
 
-        # pick a word and suggest it, loop for next guess
-        suggestions = wordlist.pick(algstate)
+        # calculate best words
+        suggestions = alg.pick(algstate)
+
         if gamestate["gameStatus"] == "IN_PROGRESS":
-            print("Here are the 5 highest scoring words left in the wordpool:: \n" + str(suggestions))
+            print("Here are the 3 highest scoring words left in the wordpool:: \n" + str(suggestions))
             count += 1
-
     if gamestate["gameStatus"] == "WIN":
         print("Congrats (to me), you got the word right!" + "\n" + guess + " was the big ticket winner! GG!")
-
     else:
         print("dang you gotta get better at not making typos")

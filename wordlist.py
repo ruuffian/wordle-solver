@@ -7,6 +7,9 @@ Description:
 
 
 class WordleState:
+    """
+
+    """
     pool: list[str]
     blacklist: list[str]
     yellowlist: list[list[str]]
@@ -24,7 +27,7 @@ class WordleState:
         self.greenlist = gl
 
     def refine_list(self):
-        return lst_refine(self)
+        self.pool = lst_refine(self)
 
 
 # Initializes words from text file, in this case all of Wordle's valid answers

@@ -36,43 +36,6 @@ def gamestate():
     return json.loads(state)
 
 
-def check_wordle(localstate: dict, wordin: str, master: WordleState) -> dict:
-    """
-    Checks the result from the current guess, parsing letters into the black, yellow, and
-    greenlists where appropriate
-    :param localstate: json-ified string from localstorage[gamestate]
-    :param wordin: The current guess
-    :param master: The master WordleState
-    :return: New black/yellow/green lists based on the guessed word
-    """
-    guesses = localstate["boardState"]
-    curr = wordin
-    i = 0
-
-    # iterates up to the latest guess
-    while curr != guesses[i] and i < 5:
-        i += 1
-    bl = []
-    yl = master.yellowlist
-    corr = master.greenlist
-    j = 0
-
-    # checks each letter's result and adds them to the correct list
-    for let in wordin:
-        if localstate["evaluations"][i][j] == "correct":
-            corr[j] = let
-        elif localstate["evaluations"][i][j] == "present":
-            yl[j].append(let)
-        else:
-            bl.append(let)
-        j += 1
-    return {
-        "blacklist": bl,
-        "yellowlist": yl,
-        "greenlist": corr,
-    }
-
-
 if __name__ == '__main__':
     # load chromedriver
     s = Service("chromedriver.exe")
