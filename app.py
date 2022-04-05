@@ -65,26 +65,25 @@ def validate(word: str, a_state: WordleState) -> bool:
 
 
 if __name__ == '__main__':
-    site
-
+    Site = site.WebScraper()
     count = 0
-    gamestate = site.gamestate()
+    gamestate = Site.gamestate()
     print("Welcome to ruuffian's Wordle solver!")
-    print("Suggested starting words:"
-          "Adieu"
-          "Crane"
-          "Taste")
+    print("Suggested starting words:\n"
+          "Adieu\n"
+          "Crane\n"
+          "Taste\n")
     algstate = wordle.WordleState()
 
     while gamestate["gameStatus"] != "FINISHED":
         print("What word would you like to guess?")
-        guess = input()
+        guess = input().lower()
 
         if not validate(guess, algstate):
             print("Invalid guess- Please try again.")
             continue
 
-        site.enter_word(guess)
+        Site.enter_word(guess)
         time.sleep(.5)
         gamestate = gamestate()
         word_results = check_wordle(algstate, gamestate, guess)

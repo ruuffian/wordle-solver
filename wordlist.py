@@ -8,7 +8,16 @@ Description:
 
 class WordleState:
     """
+    pool: A list of currently legal strings. Generally used after each guess to trim the legal wordpool.
+    blacklist: A list of each blacklisted letter. Letters appearing in this list are illegal.
+    yellowlist: A nested list of strings. Each position in the out list represents one letter position in the
+    possible word. Each nested list contains every letter that is in the word but not in that position.
+    greenlist: An array containing each correct letter.
 
+    update_info: Takes in a black, yellow and green list that are appended to their respective
+    fields to update the state of the game.
+
+    refine_list: Calls the function list_refine to trim the legal word_pool.
     """
     pool: list[str]
     blacklist: list[str]
@@ -16,7 +25,8 @@ class WordleState:
     greenlist: list[str]
 
     def __init__(self):
-        self.pool = []
+        self.pool = load_words(True)
+        self.pool.sort()
         self.blacklist = []
         self.yellowlist = [[""]] * 5
         self.greenlist = ["0"] * 5
@@ -30,7 +40,6 @@ class WordleState:
         self.pool = lst_refine(self)
 
 
-# Initializes words from text file, in this case all of Wordle's valid answers
 def load_words(flag: bool) -> list:
     """
     Initializes the wordpool with all of Wordles valid answers, stored in a text file
@@ -38,7 +47,7 @@ def load_words(flag: bool) -> list:
     :return: List of words pulled from text file
     """
     valid_lst = []
-    if flag == 1:
+    if flag is True:
         with open('resources/solutions.txt') as word_file:
             word_set = set(word_file.read().split())
             for val in word_set:
