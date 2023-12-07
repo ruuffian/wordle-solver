@@ -5,11 +5,18 @@ similar to the one behind the impossible hangman game. The only optimization in 
 prioritizing words with unique letters in order to guess more unguessed letters, and prioritizing words that have
 letters with higher density scores.
 
+## Installation
+
+1. Clone the repository to a directory of your choosing and navigate to the `src` directory
+2. Run `pip install -r requirements.txt` to install the project's dependencies
+3. If you are using the automated script, navigate to the [Chromedriver](https://chromedriver.chromium.org/downloads) downloads page and download the latest version, placing it in the `resources` directory.
+4. You're done! Enjoy the project :)
+
 ## How to Use the Manual Script
 
-You can start with any word but I have included two suggestions that contain multiple vowels. The script will then
+You can start with any word, but I have included two suggestions that contain multiple vowels. The script will then
 prompt you for wordle output. This is a 5 letter string that gives information on what letters are in the word, what
-letters arent, and what letters are in the correct position.
+letters aren't, and what letters are in the correct position.
 
 Here are some wordle outputs with screenshots of the wordle screen.
 
@@ -33,7 +40,7 @@ submit issues!
 ## How to Use the Automated Input Script
 
 This script is much easier to use. It will suggest a word based on the game state, but ultimately will accept any word
-that you give it. All of the I/O is done on the command line, but you can watch the bot enter the words in the browser
+that you give it. All the I/O is done on the command line, but you can watch the bot enter the words in the browser
 that it opens up on runtime.
 
 ## TODO

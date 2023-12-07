@@ -6,11 +6,11 @@ Description:
     Can also intereacted with to solve a puzzle besides the puzzle of the day.
 """
 
-import scraper as site
+import src.scraper as site
 import time
-import wordlist as wordle
-from wordlist import WordleState
-import wrd_alg as alg
+import src.wordlist as wordle
+from src.wordlist import WordleState
+import src.wrd_alg as alg
 
 
 def check_wordle(state: WordleState, n_state: dict, word: str, ) -> dict:
@@ -65,10 +65,10 @@ def validate(word: str, a_state: WordleState) -> bool:
 
 
 if __name__ == '__main__':
+    print("Welcome to ruuffian's Wordle solver!")
     Site = site.WebScraper()
     count = 0
     gamestate = Site.gamestate()
-    print("Welcome to ruuffian's Wordle solver!")
     print("Suggested starting words:\n"
           "Adieu\n"
           "Crane\n"
